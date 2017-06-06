@@ -1,0 +1,946 @@
+-- MySQL dump 10.13  Distrib 5.7.16, for osx10.10 (x86_64)
+--
+-- Host: localhost    Database: mail_zonmanager
+-- ------------------------------------------------------
+-- Server version	5.7.16
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `zm_CashFlowDaily`
+--
+
+DROP TABLE IF EXISTS `zm_CashFlowDaily`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_CashFlowDaily` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `amazon_date` date NOT NULL,
+  `country` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `product_sku` char(50) COLLATE utf8_unicode_ci NOT NULL,
+  `sold_quantity` int(11) NOT NULL DEFAULT '0',
+  `promo_quantity` int(11) NOT NULL DEFAULT '0',
+  `refund_sold_quantity` int(11) NOT NULL DEFAULT '0',
+  `refund_promo_quantity` int(11) NOT NULL DEFAULT '0',
+  `sold_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `promo_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `refund_sold_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `refund_promo_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `fee_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `reimbusement_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `other_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `revenue` double(8,2) NOT NULL DEFAULT '0.00',
+  `profit` double(8,2) NOT NULL DEFAULT '0.00',
+  `reimbursement_quantity` int(11) NOT NULL DEFAULT '0',
+  `is_fba` tinyint(1) DEFAULT NULL,
+  `fo_quantity` int(11) NOT NULL DEFAULT '0',
+  `user_id` int(10) unsigned NOT NULL,
+  `cost_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `cost_promo_amount` double(8,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`),
+  KEY `cashflowdaily_amazon_date_country_product_sku_index` (`amazon_date`,`country`,`product_sku`),
+  KEY `cashflowdaily_updated_at_index` (`updated_at`),
+  KEY `cashflowdaily_user_id_foreign` (`user_id`),
+  CONSTRAINT `cashflowdaily_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_ProductHistory`
+--
+
+DROP TABLE IF EXISTS `zm_ProductHistory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_ProductHistory` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `amazon_date` date NOT NULL,
+  `inventory_quantity` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `producthistory_product_id_foreign` (`product_id`),
+  CONSTRAINT `producthistory_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `zm_products` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_amazon_payments`
+--
+
+DROP TABLE IF EXISTS `zm_amazon_payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_amazon_payments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `country` char(10) COLLATE utf8_unicode_ci NOT NULL,
+  `payment_date` date DEFAULT NULL,
+  `amount` double(8,2) NOT NULL DEFAULT '0.00',
+  `user_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `amazon_payments_country_payment_date_index` (`country`,`payment_date`),
+  KEY `amazon_payments_updated_at_index` (`updated_at`),
+  KEY `amazon_payments_user_id_foreign` (`user_id`),
+  CONSTRAINT `amazon_payments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_cache`
+--
+
+DROP TABLE IF EXISTS `zm_cache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_cache` (
+  `key` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `value` text COLLATE utf8_unicode_ci NOT NULL,
+  `expiration` int(11) NOT NULL,
+  UNIQUE KEY `cache_key_unique` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_currency_exchange_rates`
+--
+
+DROP TABLE IF EXISTS `zm_currency_exchange_rates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_currency_exchange_rates` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ex_date` date NOT NULL,
+  `currency` char(10) COLLATE utf8_unicode_ci NOT NULL,
+  `rate` double(15,10) NOT NULL DEFAULT '1.0000000000',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `currency_exchange_rates_ex_date_currency_unique` (`ex_date`,`currency`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_email_template`
+--
+
+DROP TABLE IF EXISTS `zm_email_template`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_email_template` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `content` longtext COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_template_name_unique` (`name`),
+  KEY `email_template_user_id_foreign` (`user_id`),
+  CONSTRAINT `email_template_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_failed_jobs`
+--
+
+DROP TABLE IF EXISTS `zm_failed_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_failed_jobs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `connection` text COLLATE utf8_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_jobs`
+--
+
+DROP TABLE IF EXISTS `zm_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_jobs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `attempts` tinyint(3) unsigned NOT NULL,
+  `reserved_at` int(10) unsigned DEFAULT NULL,
+  `available_at` int(10) unsigned NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_reserved_at_index` (`queue`,`reserved_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_migrations`
+--
+
+DROP TABLE IF EXISTS `zm_migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_migrations` (
+  `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_ppc_daily`
+--
+
+DROP TABLE IF EXISTS `zm_ppc_daily`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_ppc_daily` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `amazon_date` date NOT NULL,
+  `country` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `product_sku` char(20) COLLATE utf8_unicode_ci NOT NULL,
+  `clicks` int(11) NOT NULL DEFAULT '0',
+  `impressions` int(11) NOT NULL DEFAULT '0',
+  `cost` double(8,2) NOT NULL DEFAULT '0.00',
+  `sales` double(8,2) NOT NULL DEFAULT '0.00',
+  `costOfSales` double(8,2) NOT NULL DEFAULT '0.00',
+  `costPerClick` double(8,2) NOT NULL DEFAULT '0.00',
+  `user_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ppc_daily_amazon_date_country_product_sku_index` (`amazon_date`,`country`,`product_sku`),
+  KEY `ppc_daily_user_id_foreign` (`user_id`),
+  CONSTRAINT `ppc_daily_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_ppc_sum_daily`
+--
+
+DROP TABLE IF EXISTS `zm_ppc_sum_daily`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_ppc_sum_daily` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `amazon_date` date NOT NULL,
+  `country` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `total_clicks` int(11) NOT NULL DEFAULT '0',
+  `total_cost` double(8,2) NOT NULL DEFAULT '0.00',
+  `daily_ratio_fix` double(15,8) NOT NULL DEFAULT '0.00000000',
+  `user_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ppc_sum_daily_amazon_date_country_index` (`amazon_date`,`country`),
+  KEY `ppc_sum_daily_user_id_foreign` (`user_id`),
+  CONSTRAINT `ppc_sum_daily_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_privilege_page_subuser`
+--
+
+DROP TABLE IF EXISTS `zm_privilege_page_subuser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_privilege_page_subuser` (
+  `sub_user_id` int(10) unsigned NOT NULL,
+  `sub_page_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`sub_user_id`,`sub_page_id`),
+  CONSTRAINT `privilege_page_subuser_sub_user_id_foreign` FOREIGN KEY (`sub_user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_privilege_product_subuser`
+--
+
+DROP TABLE IF EXISTS `zm_privilege_product_subuser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_privilege_product_subuser` (
+  `sub_user_id` int(10) unsigned NOT NULL,
+  `sub_product_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`sub_user_id`,`sub_product_id`),
+  KEY `privilege_product_subuser_sub_product_id_foreign` (`sub_product_id`),
+  CONSTRAINT `privilege_product_subuser_sub_product_id_foreign` FOREIGN KEY (`sub_product_id`) REFERENCES `zm_products` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `privilege_product_subuser_sub_user_id_foreign` FOREIGN KEY (`sub_user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_product_attribute_confirmation`
+--
+
+DROP TABLE IF EXISTS `zm_product_attribute_confirmation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_product_attribute_confirmation` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `attribute_confirm_name` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `attribute_confirm_value` varchar(4096) COLLATE utf8_unicode_ci NOT NULL,
+  `confirmed_by_user_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `product_attribute_confirmation_product_id_foreign` (`product_id`),
+  KEY `product_attribute_confirmation_upa_index` (`user_id`,`product_id`,`attribute_confirm_name`),
+  CONSTRAINT `product_attribute_confirmation_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `zm_products` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `product_attribute_confirmation_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=915 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_product_attribute_monitor`
+--
+
+DROP TABLE IF EXISTS `zm_product_attribute_monitor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_product_attribute_monitor` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `attribute_log_type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `attribute_name` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `attribute_old_value` varchar(4096) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `attribute_new_value` varchar(4096) COLLATE utf8_unicode_ci NOT NULL,
+  `has_read` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `product_attribute_monitor_user_id_foreign` (`user_id`),
+  KEY `product_attribute_monitor_product_id_foreign` (`product_id`),
+  KEY `product_attribute_monitor_cupa_index` (`created_at`,`user_id`,`product_id`,`attribute_name`),
+  KEY `product_attribute_monitor_cua_index` (`created_at`,`user_id`,`attribute_name`),
+  KEY `product_attribute_monitor_cpa_index` (`created_at`,`product_id`,`attribute_name`),
+  CONSTRAINT `product_attribute_monitor_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `zm_products` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `product_attribute_monitor_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1130 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_product_health_status`
+--
+
+DROP TABLE IF EXISTS `zm_product_health_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_product_health_status` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `product_health_status_key` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `product_health_status_value` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `product_health_status_pp_index` (`product_id`,`product_health_status_key`),
+  CONSTRAINT `product_health_status_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `zm_products` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_products`
+--
+
+DROP TABLE IF EXISTS `zm_products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_products` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `country` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `product_status` char(50) COLLATE utf8_unicode_ci NOT NULL,
+  `product_sku` char(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_variant` char(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_asin` char(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_title` char(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `price` double(8,2) DEFAULT NULL,
+  `origin_cost` double(8,2) NOT NULL DEFAULT '0.00',
+  `origin_cost_currency` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'USD',
+  `product_image` char(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_quantity` char(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `product_alias` text COLLATE utf8_unicode_ci,
+  `var_price` text COLLATE utf8_unicode_ci,
+  `ranking_data` text COLLATE utf8_unicode_ci,
+  `product_buybox` varchar(4096) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_sellers` varchar(4096) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_invalid_variants` varchar(4096) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `has_best_seller_badge` tinyint(1) NOT NULL DEFAULT '0',
+  `product_main_category` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `product_current_rating` double(8,1) DEFAULT NULL,
+  `product_upc` text COLLATE utf8_unicode_ci,
+  `product_manufacturer` text COLLATE utf8_unicode_ci NOT NULL,
+  `product_brand` text COLLATE utf8_unicode_ci NOT NULL,
+  `product_fnsku` char(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_display_price` double(8,2) NOT NULL,
+  `product_additional_images` text COLLATE utf8_unicode_ci NOT NULL,
+  `product_description` text COLLATE utf8_unicode_ci NOT NULL,
+  `product_bullets` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `products_country_product_sku_product_variant_index` (`country`,`product_sku`,`product_variant`),
+  KEY `products_updated_at_index` (`updated_at`),
+  KEY `products_user_id_country_product_fnsku_index` (`user_id`,`country`,`product_fnsku`),
+  CONSTRAINT `products_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_products_reviews`
+--
+
+DROP TABLE IF EXISTS `zm_products_reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_products_reviews` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `amazon_date` date DEFAULT NULL,
+  `country` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `product_asin` char(20) COLLATE utf8_unicode_ci NOT NULL,
+  `review_id` char(20) COLLATE utf8_unicode_ci NOT NULL,
+  `rating` double(8,2) NOT NULL DEFAULT '0.00',
+  `title` text COLLATE utf8_unicode_ci NOT NULL,
+  `author` text COLLATE utf8_unicode_ci NOT NULL,
+  `content` text COLLATE utf8_unicode_ci NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `is_verified_purchase` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `review_fetch_helper` (`product_asin`,`user_id`,`country`,`review_id`),
+  KEY `products_reviews_amazon_date_country_product_asin_index` (`amazon_date`,`country`,`product_asin`),
+  KEY `products_reviews_review_id_index` (`review_id`),
+  KEY `count_helper` (`user_id`,`country`,`product_asin`,`amazon_date`),
+  CONSTRAINT `products_reviews_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_rel_supplier_product`
+--
+
+DROP TABLE IF EXISTS `zm_rel_supplier_product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_rel_supplier_product` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `product_id` int(10) unsigned NOT NULL,
+  `supplier_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `rel_supplier_product_product_id_supplier_id_unique` (`product_id`,`supplier_id`),
+  KEY `rel_supplier_product_supplier_id_foreign` (`supplier_id`),
+  CONSTRAINT `rel_supplier_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `zm_products` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `rel_supplier_product_supplier_id_foreign` FOREIGN KEY (`supplier_id`) REFERENCES `zm_supplier` (`supplier_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=335 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_shipping`
+--
+
+DROP TABLE IF EXISTS `zm_shipping`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_shipping` (
+  `shipping_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `forwarder_id` int(10) unsigned DEFAULT NULL,
+  `secure_id` char(100) COLLATE utf8_unicode_ci NOT NULL,
+  `secure_link` char(100) COLLATE utf8_unicode_ci NOT NULL,
+  `forwarder_quote` double DEFAULT NULL,
+  `status` text COLLATE utf8_unicode_ci NOT NULL,
+  `source_port` text COLLATE utf8_unicode_ci,
+  `destination_port` text COLLATE utf8_unicode_ci,
+  `estimate_time_delivery` date DEFAULT NULL,
+  `estimate_time_arrived` date DEFAULT NULL,
+  `shipment_size` text COLLATE utf8_unicode_ci,
+  `amazon_shipments_data` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `target_country` text COLLATE utf8_unicode_ci NOT NULL,
+  `shipment_type` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `container_type` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`shipping_id`),
+  UNIQUE KEY `shipping_shipping_user_id_shipping_secure_id_unique` (`user_id`,`secure_id`),
+  UNIQUE KEY `shipping_shipping_user_id_shipping_secure_link_unique` (`user_id`,`secure_link`),
+  KEY `shipping_shipping_forwarder_id_foreign` (`forwarder_id`),
+  KEY `shipping_shipping_user_id_shipping_forwarder_id_index` (`user_id`,`forwarder_id`),
+  CONSTRAINT `shipping_shipping_forwarder_id_foreign` FOREIGN KEY (`forwarder_id`) REFERENCES `zm_shipping_forwarders` (`forwarder_id`) ON DELETE SET NULL,
+  CONSTRAINT `shipping_shipping_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_shipping_addresses`
+--
+
+DROP TABLE IF EXISTS `zm_shipping_addresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_shipping_addresses` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `country_user` char(5) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `zip` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `address1` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `address2` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `city` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `district` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `state` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `country_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `amz_shipping_address_id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `shipping_addresses_amz_shipping_address_id_unique` (`amz_shipping_address_id`),
+  KEY `shipping_addresses_user_id_foreign` (`user_id`),
+  CONSTRAINT `shipping_addresses_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_shipping_forwarders`
+--
+
+DROP TABLE IF EXISTS `zm_shipping_forwarders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_shipping_forwarders` (
+  `forwarder_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `phone` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `city` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `post_code` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `country` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `port` text COLLATE utf8_unicode_ci NOT NULL,
+  `state` text COLLATE utf8_unicode_ci,
+  `district` text COLLATE utf8_unicode_ci,
+  PRIMARY KEY (`forwarder_id`),
+  KEY `shipping_forwarders_sf_user_id_foreign` (`user_id`),
+  CONSTRAINT `shipping_forwarders_sf_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_shipping_orders`
+--
+
+DROP TABLE IF EXISTS `zm_shipping_orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_shipping_orders` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `amz_status` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `order_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `product_sku` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_asin` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `country` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `tracking_id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `usps_status` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `shipping_carrier` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `shipping_service` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ship_date` date DEFAULT NULL,
+  `address_buyer` text COLLATE utf8_unicode_ci,
+  `purchase_date` date NOT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `shipping_orders_order_id_unique` (`order_id`),
+  KEY `shipping_orders_user_id_foreign` (`user_id`),
+  KEY `shipping_orders_tracking_id_index` (`tracking_id`),
+  KEY `shipping_orders_purchase_date_index` (`purchase_date`),
+  CONSTRAINT `shipping_orders_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1385 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_shipping_products`
+--
+
+DROP TABLE IF EXISTS `zm_shipping_products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_shipping_products` (
+  `shipping_product_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `shipping_id` int(10) unsigned NOT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `order_id` int(10) unsigned DEFAULT NULL,
+  `order_product_id` int(10) unsigned DEFAULT NULL,
+  `product_sku` char(30) COLLATE utf8_unicode_ci NOT NULL,
+  `product_name` text COLLATE utf8_unicode_ci NOT NULL,
+  `no_of_units` int(11) NOT NULL,
+  `no_of_units_confirm` int(11) DEFAULT NULL,
+  `no_of_cartons` int(11) NOT NULL,
+  `no_of_cartons_confirm` int(11) DEFAULT NULL,
+  `gross_weight` double NOT NULL,
+  `gross_weight_confirm` double DEFAULT NULL,
+  `total_shipment_dim_m3` double NOT NULL,
+  `total_shipment_dim_m3_confirm` double DEFAULT NULL,
+  `forwarder_confirm_note` longtext COLLATE utf8_unicode_ci,
+  `quantity_unit_storage` int(11) DEFAULT NULL,
+  `quantity_carton_storage` int(11) DEFAULT NULL,
+  `quantity_unit_requested` int(11) DEFAULT NULL,
+  `quantity_carton_requested` int(11) DEFAULT NULL,
+  `quantity_unit_delivery` int(11) DEFAULT NULL,
+  `quantity_carton_delivery` int(11) DEFAULT NULL,
+  `quantity_unit_complete` int(11) DEFAULT NULL,
+  `quantity_carton_complete` int(11) DEFAULT NULL,
+  `units_per_carton` int(10) unsigned NOT NULL,
+  `damaged_units` int(10) unsigned NOT NULL,
+  `single_carton_dim_cm` text COLLATE utf8_unicode_ci,
+  `carton_weight_kg` text COLLATE utf8_unicode_ci,
+  `single_unit_weight_kg` text COLLATE utf8_unicode_ci,
+  PRIMARY KEY (`shipping_product_id`),
+  KEY `shipping_products_sp_shipping_id_foreign` (`shipping_id`),
+  KEY `shipping_products_sp_product_id_foreign` (`product_id`),
+  KEY `shipping_products_sp_order_id_foreign` (`order_id`),
+  KEY `shipping_products_sp_order_product_id_foreign` (`order_product_id`),
+  CONSTRAINT `shipping_products_sp_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `zm_supplier_order` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `shipping_products_sp_order_product_id_foreign` FOREIGN KEY (`order_product_id`) REFERENCES `zm_supplier_order_products` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `shipping_products_sp_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `zm_products` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `shipping_products_sp_shipping_id_foreign` FOREIGN KEY (`shipping_id`) REFERENCES `zm_shipping` (`shipping_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_supplier`
+--
+
+DROP TABLE IF EXISTS `zm_supplier`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_supplier` (
+  `supplier_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `city` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `post_code` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `country` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `supplier_port` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`supplier_id`),
+  KEY `supplier_user_id_foreign` (`user_id`),
+  CONSTRAINT `supplier_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_supplier_order`
+--
+
+DROP TABLE IF EXISTS `zm_supplier_order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_supplier_order` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `supplier_id` int(10) unsigned NOT NULL,
+  `order_id` char(100) COLLATE utf8_unicode_ci NOT NULL,
+  `status` text COLLATE utf8_unicode_ci NOT NULL,
+  `estimated_production_completion` date DEFAULT NULL,
+  `deposit_percent_required` double DEFAULT '30',
+  `order_date` date DEFAULT NULL,
+  `units_per_carton` int(10) unsigned DEFAULT NULL,
+  `last_complete_notification` date DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `total_paid` double(10,4) NOT NULL DEFAULT '0.0000',
+  `total_amount` double(10,4) NOT NULL DEFAULT '0.0000',
+  `deposit_required` double(10,4) NOT NULL DEFAULT '0.0000',
+  `shipping_id` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `supplier_order_user_id_order_id_unique` (`user_id`,`order_id`),
+  KEY `supplier_order_supplier_id_foreign` (`supplier_id`),
+  KEY `supplier_order_user_id_supplier_id_product_sku_index` (`user_id`,`supplier_id`),
+  KEY `supplier_order_user_id_order_date_index` (`user_id`,`order_date`),
+  CONSTRAINT `supplier_order_supplier_id_foreign` FOREIGN KEY (`supplier_id`) REFERENCES `zm_supplier` (`supplier_id`) ON DELETE CASCADE,
+  CONSTRAINT `supplier_order_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_supplier_order_files`
+--
+
+DROP TABLE IF EXISTS `zm_supplier_order_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_supplier_order_files` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `order_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `sof_type` text COLLATE utf8_unicode_ci NOT NULL,
+  `sof_file` text COLLATE utf8_unicode_ci NOT NULL,
+  `sof_note` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `supplier_order_files_order_id_foreign` (`order_id`),
+  KEY `supplier_order_files_user_id_foreign` (`user_id`),
+  CONSTRAINT `supplier_order_files_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `zm_supplier_order` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `supplier_order_files_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_supplier_order_logs`
+--
+
+DROP TABLE IF EXISTS `zm_supplier_order_logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_supplier_order_logs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `order_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `sol_type` char(20) COLLATE utf8_unicode_ci NOT NULL,
+  `sol_by` text COLLATE utf8_unicode_ci,
+  `sol_param` text COLLATE utf8_unicode_ci,
+  PRIMARY KEY (`id`),
+  KEY `supplier_order_logs_order_id_sol_type_index` (`order_id`,`sol_type`),
+  KEY `supplier_order_logs_user_id_foreign` (`user_id`),
+  CONSTRAINT `supplier_order_logs_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `zm_supplier_order` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `supplier_order_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_supplier_order_payments`
+--
+
+DROP TABLE IF EXISTS `zm_supplier_order_payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_supplier_order_payments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `order_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `sop_type` text COLLATE utf8_unicode_ci NOT NULL,
+  `sop_amount` double(8,2) NOT NULL,
+  `sop_proof_file` text COLLATE utf8_unicode_ci NOT NULL,
+  `sop_note` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `supplier_order_payments_order_id_foreign` (`order_id`),
+  KEY `supplier_order_payments_user_id_foreign` (`user_id`),
+  CONSTRAINT `supplier_order_payments_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `zm_supplier_order` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `supplier_order_payments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_supplier_order_products`
+--
+
+DROP TABLE IF EXISTS `zm_supplier_order_products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_supplier_order_products` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `order_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `product_sku` char(30) COLLATE utf8_unicode_ci NOT NULL,
+  `requested_product_name` text COLLATE utf8_unicode_ci NOT NULL,
+  `no_of_units` int(11) NOT NULL,
+  `no_of_cartons` int(11) DEFAULT NULL,
+  `single_carton_dim_cm` text COLLATE utf8_unicode_ci,
+  `single_unit_weight_kg` double DEFAULT NULL,
+  `carton_weight_kg` double(8,2) DEFAULT NULL,
+  `gross_weight` double(8,2) DEFAULT NULL,
+  `total_shipment_dim_m3` double(8,2) DEFAULT NULL,
+  `unit_price_amount` double(8,2) DEFAULT NULL,
+  `other_charges_amount` double(8,2) DEFAULT NULL,
+  `other_charges_description` text COLLATE utf8_unicode_ci,
+  `units_per_carton` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `supplier_order_products_product_id_foreign` (`product_id`),
+  KEY `supplier_order_products_order_id_foreign` (`order_id`),
+  KEY `supplier_order_products_user_id_foreign` (`user_id`),
+  CONSTRAINT `supplier_order_products_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `zm_supplier_order` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `supplier_order_products_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `zm_products` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `supplier_order_products_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_transactions`
+--
+
+DROP TABLE IF EXISTS `zm_transactions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_transactions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `report_id` char(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `settlement_id` char(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `country` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `amazon_date` date NOT NULL,
+  `order_id` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `product_sku` char(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `transaction_type` char(100) COLLATE utf8_unicode_ci NOT NULL,
+  `transaction_amount` double(8,2) NOT NULL,
+  `transaction_quantity` int(11) NOT NULL DEFAULT '1',
+  `transaction_currency` char(5) COLLATE utf8_unicode_ci NOT NULL,
+  `transaction_is_promo` tinyint(1) DEFAULT NULL,
+  `x_amount_type` char(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `x_quantity_type` char(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `is_fba` tinyint(1) DEFAULT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transactions_report_id_index` (`report_id`),
+  KEY `transactions_settlement_id_index` (`settlement_id`),
+  KEY `transactions_order_id_index` (`order_id`),
+  KEY `transactions_product_sku_index` (`product_sku`),
+  KEY `transactions_amazon_date_index` (`amazon_date`),
+  KEY `transactions_updated_at_index` (`updated_at`),
+  KEY `transactions_x_amount_type_index` (`x_amount_type`),
+  KEY `transactions_x_quantity_type_index` (`x_quantity_type`),
+  KEY `transaction_amount_sum_index` (`user_id`,`country`,`amazon_date`,`transaction_type`,`transaction_amount`),
+  KEY `updated_at_query` (`user_id`,`updated_at`,`amazon_date`),
+  CONSTRAINT `transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=153813 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_user_logs`
+--
+
+DROP TABLE IF EXISTS `zm_user_logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_user_logs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `log_action` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `log_param` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `log_details` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_logs_user_id_foreign` (`user_id`),
+  CONSTRAINT `user_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_users`
+--
+
+DROP TABLE IF EXISTS `zm_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `last_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password_encrypted` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `last_login` timestamp NULL DEFAULT NULL,
+  `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `user_status` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `crawl_interface` char(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `amazon_email` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `amazon_password` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `parent_id` bigint(20) DEFAULT NULL,
+  `seller_id` text COLLATE utf8_unicode_ci,
+  `user_company_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `user_walmart_params` text COLLATE utf8_unicode_ci NOT NULL,
+  `user_feedbackfive_params` text COLLATE utf8_unicode_ci NOT NULL,
+  `user_amztracker_params` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `zm_walmart_orders`
+--
+
+DROP TABLE IF EXISTS `zm_walmart_orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `zm_walmart_orders` (
+  `wmo_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `wmo_user_id` int(10) unsigned NOT NULL,
+  `wmo_purchaseOrderId` bigint(20) NOT NULL,
+  `wmo_customerOrderId` bigint(20) NOT NULL,
+  `wmo_customerEmailId` text COLLATE utf8_unicode_ci NOT NULL,
+  `wmo_orderDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `wmo_shipping_info_json` text COLLATE utf8_unicode_ci NOT NULL,
+  `wmo_order_lines_json` text COLLATE utf8_unicode_ci NOT NULL,
+  `wmo_3pl_shipping_info_json` text COLLATE utf8_unicode_ci NOT NULL,
+  `wmo_order_line_status` text COLLATE utf8_unicode_ci NOT NULL,
+  `wmo_order_line_status_date` datetime NOT NULL,
+  `wmo_order_line_number` int(11) NOT NULL,
+  `wmo_order_line_product_name` text COLLATE utf8_unicode_ci NOT NULL,
+  `wmo_order_line_product_sku` char(100) COLLATE utf8_unicode_ci NOT NULL,
+  `wmo_order_line_quantity` int(11) NOT NULL,
+  `wmo_order_line_estimated_delivery_date` date NOT NULL,
+  `wmo_order_line_estimated_ship_date` date NOT NULL,
+  PRIMARY KEY (`wmo_id`),
+  KEY `walmart_orders_wmo_user_id_foreign` (`wmo_user_id`),
+  CONSTRAINT `walmart_orders_wmo_user_id_foreign` FOREIGN KEY (`wmo_user_id`) REFERENCES `zm_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-06-01 19:59:03
